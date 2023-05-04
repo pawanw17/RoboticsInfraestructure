@@ -29,4 +29,5 @@ export const THEORY_URL = {
   VacuumCleaner: BaseUrl + "MobileRobots/vacuum_cleaner",
   VacuumCleanerLoc: BaseUrl + "MobileRobots/vacuum_cleaner_loc",
   FollowPerson: BaseUrl + "MobileRobots/follow_person",
+  DroneTello: BaseUrl + "MobileRobots/drone_tello",
 };

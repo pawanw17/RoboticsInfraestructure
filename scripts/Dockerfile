@@ -3,6 +3,7 @@ FROM humble_base
 # RAM and src directory
 COPY ./scripts/manager/src /src
 COPY ./scripts/manager/src/manager/manager.py /
+COPY ./scripts/rviz_tello_cfg.rviz /
 
 # copy scripts for vnc displays
 COPY ./scripts/start_vnc.sh /
@@ -29,10 +30,23 @@ RUN cp -r /opt/jderobots/CustomRobots /home/ws/src/
 RUN echo 'export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:/home/ws/install/custom_robots/share' >> ~/.bashrc
 RUN echo 'source /usr/share/gazebo/setup.bash' >> ~/.bashrc
 
+# create workspace and add Robot packages
+RUN mkdir -p /home/ws/src
+RUN cp -r /opt/jderobots/CustomRobots /home/ws/src/
+WORKDIR /home/ws/src/CustomRobots
+#RUN cp -r tello_phy/tello_ros/ ..
+#RUN cp -r tello_phy/ros2_shared/ ..
+#WORKDIR /home/ws/src/CustomRobots/tello_ros/
+#RUN ls
+#RUN rm -rf tello_description
+#RUN rm -rf tello_gazebo
+RUN sudo apt update
+RUN sudo apt install -y ffmpeg
+
 # Compile workspace
 WORKDIR /home/ws
 RUN rosdep install --from-paths src --ignore-src -r --rosdistro humble -y
-RUN colcon build --symlink-install
+#RUN colcon build --symlink-install
 
 # Django server
 EXPOSE 8000
@@ -55,6 +69,13 @@ EXPOSE 6082
 
 # WebRtc
 EXPOSE 1831
+
+# Tello port
+EXPOSE 8889
+EXPOSE 38065
+EXPOSE 8890
+EXPOSE 11111
+
 
 WORKDIR /
 CMD ["./entrypoint.sh"]

@@ -42,6 +42,7 @@ RUN apt-get update && apt-get install -y \
   net-tools \
   && rm -rf /var/lib/apt/lists/* 
 
+RUN add-apt-repository universe
 RUN apt-get update && apt-get install -y alsa-utils alsa-oss
   
 # Install ROS2 and ROS packages
@@ -52,6 +53,7 @@ RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o 
     ros-${ROS_DISTRO}-desktop \
     ros-${ROS_DISTRO}-xacro \
     ros-${ROS_DISTRO}-joint-state-publisher \
+    ros-${ROS_DISTRO}-usb-cam \
     python3-colcon-common-extensions \
     python3-pip python3-rosdep python3-vcstool \
     python3-argcomplete \
@@ -83,14 +85,6 @@ RUN python3.10 -m pip install websockets asyncio
 # pip install dependencies
 RUN python3.10 -m pip install pylint transitions pydantic websocket-client opencv-python
 
-# Install Python 3 pip build dependencies first
-RUN python3.10 -m pip install --upgrade pip wheel setuptools
-
-# Python 3 dependencies installed by pip
-RUN python3.10 -m pip install argparse argcomplete coverage cerberus empy jinja2 kconfiglib \
-		matplotlib==3.0.* numpy nunavut==1.1.0 packaging pkgconfig pyros-genmsg pyulog \
-		pyyaml requests serial six toml psutil pyulog wheel onnxruntime Pillow opencv-python==4.5.5.64 netron seaborn
-
 # Install VNC
 # Xorg segfault error mitigation
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -113,6 +107,13 @@ RUN apt-get update && apt-get --no-install-recommends install -y \
 
 RUN wget https://xpra.org/xorg.conf \
     && rm -rf /tmp/*
+
+
+# dron dependencies
+RUN sudo apt update
+RUN sudo apt-get install -y libasio-dev
+RUN sudo apt-get install -y libgtk-3-dev
+RUN sudo apt install -y wireless-tools
 
 # Install noVNC and websockify
 RUN git clone https://github.com/novnc/noVNC.git
